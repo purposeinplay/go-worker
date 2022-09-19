@@ -1,4 +1,10 @@
 # Go Worker
+[![lint-test-redisw](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_redisw.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_redisw.yml)
+[![lint-test-inmem](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_inmem.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_inmem.yml)
+[![lint-test-amqpw](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_amqpw.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_amqpw.yml)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/purposeinplay/go-worker)](https://goreportcard.com/report/github.com/purposeinplay/go-worker)
+
 Go Worker is a Go library for performing asynchronously background jobs backed by:
 
 - *Go Routines*: Great for simple application that don't require persistant jobs queues. It uses go routines to implement
