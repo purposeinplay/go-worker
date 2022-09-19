@@ -1,14 +1,14 @@
-name: lint-test-inmem
+name: lint-test-amqpw
 
 on:
   push:
     branches:
       - main
     paths:
-      - inmem/**
+      - amqpw/**
 
 env:
-  PACKAGE: inmem
+  PACKAGE: amqpw
   GO_VERSION: 1.19
 
 jobs:
