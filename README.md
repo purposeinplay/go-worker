@@ -1,4 +1,4 @@
-#Go Worker
+# Go Worker
 Go Worker is a Go library for performing asynchronously background jobs backed by:
 
 - *Go Routines*: Great for simple application that don't require persistant jobs queues. It uses go routines to implement
