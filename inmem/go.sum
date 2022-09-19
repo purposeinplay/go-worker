@@ -11,6 +11,8 @@ github.com/purposeinplay/go-commons/logs v0.0.1 h1:xpxDyYevs6hdhjfugLA+NJRZrM0Df
 github.com/purposeinplay/go-commons/logs v0.0.1/go.mod h1:n+IysjuLdUx3L8t3bCX0ltTAWWpRfzLyGbll3tUxMy8=
 github.com/purposeinplay/go-worker v0.0.0-20220919061831-6dc2c93627cf h1:zBStthEA61WmgoO7bfMGu8qh415SxpZzxLk5ZZh40Kg=
 github.com/purposeinplay/go-worker v0.0.0-20220919061831-6dc2c93627cf/go.mod h1:WXtqnTNugrfQ05Mcr7WY3CJoS7KwT1SO4z8Uutc2Epo=
+github.com/purposeinplay/go-worker v0.0.0-20220919103644-5a5d6d8d8436 h1:oUC47txDs8nb4gkJqFT0ZEp+tkgNSOr9vnrArER5RXk=
+github.com/purposeinplay/go-worker v0.0.0-20220919103644-5a5d6d8d8436/go.mod h1:WXtqnTNugrfQ05Mcr7WY3CJoS7KwT1SO4z8Uutc2Epo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
