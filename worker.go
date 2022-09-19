@@ -16,7 +16,7 @@ type Worker interface {
 	// Stop the worker
 	Stop() error
 
-	// Perform a job as soon as possibly
+	// Perform a job as soon as possible
 	Perform(job Job) error
 
 	// PerformAt performs a job at a particular time
