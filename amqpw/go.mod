@@ -7,7 +7,7 @@ require (
 	github.com/ory/dockertest/v3 v3.9.1
 	github.com/purposeinplay/go-commons/logs v0.0.1
 	github.com/purposeinplay/go-commons/rand v0.0.1
-	github.com/purposeinplay/go-worker v0.0.0-20220919103644-5a5d6d8d8436
+	github.com/purposeinplay/go-worker v0.1.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.23.0
