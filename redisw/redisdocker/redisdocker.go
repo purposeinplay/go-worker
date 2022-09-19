@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/gomodule/redigo/redis"
 	"github.com/ory/dockertest/v3"
 )
 
@@ -46,6 +47,15 @@ func NewContainer() (
 	}
 
 	err = pool.Retry(func() error {
+		addr := fmt.Sprintf("localhost:%s", resource.GetPort("6379/tcp"))
+
+		conn, err := redis.Dial("tcp", addr)
+
+		_, err = redis.String(conn.Do("PING"))
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 
