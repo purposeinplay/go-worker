@@ -16,7 +16,7 @@ func sampleHandler(worker.Args) error {
 func Test_InMem_RegisterEmpty(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func Test_InMem_RegisterEmpty(t *testing.T) {
 func Test_InMem_RegisterNil(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +40,7 @@ func Test_InMem_RegisterNil(t *testing.T) {
 func Test_InMem_RegisterEmptyNil(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,7 +52,7 @@ func Test_InMem_RegisterEmptyNil(t *testing.T) {
 func Test_InMem_RegisterExisting(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func Test_InMem_RegisterExisting(t *testing.T) {
 func Test_InMem_StartStop(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,7 +84,7 @@ func Test_InMem_Perform(t *testing.T) {
 
 	var hit bool
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -109,7 +109,7 @@ func Test_InMem_PerformBroken(t *testing.T) {
 
 	var hit bool
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -134,7 +134,7 @@ func Test_InMem_PerformBroken(t *testing.T) {
 func Test_InMem_PerformWithEmptyJob(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,7 +150,7 @@ func Test_InMem_PerformWithEmptyJob(t *testing.T) {
 func Test_InMem_PerformWithUnknownJob(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -166,7 +166,7 @@ func Test_InMem_PerformWithUnknownJob(t *testing.T) {
 func Test_InMem_PerformBeforeStart(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -179,7 +179,7 @@ func Test_InMem_PerformBeforeStart(t *testing.T) {
 func Test_InMem_PerformAfterStop(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -197,7 +197,7 @@ func Test_InMem_PerformAt(t *testing.T) {
 
 	var hit bool
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -230,7 +230,7 @@ func Test_InMem_PerformIn(t *testing.T) {
 
 	var hit bool
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -260,7 +260,7 @@ func Test_InMem_PerformIn(t *testing.T) {
 func Test_InMem_PerformInBeforeStart(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -275,7 +275,7 @@ func Test_InMem_PerformInBeforeStart(t *testing.T) {
 func Test_InMem_PerformInAfterStop(t *testing.T) {
 	t.Parallel()
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -299,7 +299,7 @@ func Test_InMem_PerformInFollowedByStop(t *testing.T) {
 
 	var hit bool
 
-	memWorker, err := NewInMem()
+	memWorker, err := New()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -31,9 +31,9 @@ type Worker struct {
 	started  atomic.Bool
 }
 
-// NewInMem creates a basic implementation of the Worker interface
+// New creates a basic implementation of the Worker interface
 // that is backed using just the standard library and goroutines.
-func NewInMem() (*Worker, error) {
+func New() (*Worker, error) {
 	logger, err := logs.NewLogger()
 
 	defer func() {
