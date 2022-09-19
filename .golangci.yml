@@ -1,6 +1,6 @@
 # ..golangci.yml
 run:
-  modules-download-mode: vendor
+  modules-download-mode: mod
 
   skip-dirs:
     - vendor
