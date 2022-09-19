@@ -50,6 +50,9 @@ func NewContainer() (
 		addr := fmt.Sprintf("localhost:%s", resource.GetPort("6379/tcp"))
 
 		conn, err := redis.Dial("tcp", addr)
+		if err != nil {
+			return err
+		}
 
 		_, err = redis.String(conn.Do("PING"))
 		if err != nil {
