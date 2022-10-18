@@ -216,7 +216,7 @@ func (w *Worker) Register(name string, handler worker.Handler) error {
 func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 	w.Logger.Info("enqueuing job", zap.Any("job", job))
 
-	dur := int64(t / time.Second)
+	dur := int64(t / time.Millisecond)
 
 	// Trick broker using x-dead-letter feature:
 	// the message will be pushed in a temp queue with
