@@ -223,7 +223,7 @@ func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 	// the given duration as TTL.
 	// When the TTL expires, the message is forwarded to the original queue.
 	queue, err := w.Channel.QueueDeclare(
-		fmt.Sprintf("%s_delayed_%dur", job.Handler, dur),
+		fmt.Sprintf("%s_delayed_%d", job.Handler, dur),
 		true, // Save on disk
 		true, // Auto-deletion
 		false,
