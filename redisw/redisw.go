@@ -29,7 +29,7 @@ func New(opts ...Option) (*Worker, error) {
 
 	options := &Options{
 		maxConcurrency: 25,
-		name:           "",
+		name:           "redisworker",
 		logger:         logger,
 		pool: &redis.Pool{
 			MaxActive: 5,
@@ -50,7 +50,7 @@ func New(opts ...Option) (*Worker, error) {
 	pool := work.NewWorkerPool(
 		struct{}{},
 		options.maxConcurrency,
-		"",
+		options.name,
 		options.pool,
 	)
 
