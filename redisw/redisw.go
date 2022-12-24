@@ -102,7 +102,7 @@ func (a *Worker) RegisterWithOptions(
 }
 
 // Perform sends a new job to the queue, now.
-func (a Worker) Perform(job worker.Job) error {
+func (a *Worker) Perform(job worker.Job) error {
 	a.logger.Info("enqueuing job", zap.String("job", job.String()))
 
 	_, err := a.enqueuer.Enqueue(job.Handler, job.Args)
@@ -119,7 +119,7 @@ func (a Worker) Perform(job worker.Job) error {
 }
 
 // PerformIn sends a new job to the queue, with a given delay.
-func (a Worker) PerformIn(job worker.Job, t time.Duration) error {
+func (a *Worker) PerformIn(job worker.Job, t time.Duration) error {
 	a.logger.Info("enqueuing job", zap.String("job", job.String()))
 
 	d := int64(t / time.Second)
@@ -138,6 +138,6 @@ func (a Worker) PerformIn(job worker.Job, t time.Duration) error {
 }
 
 // PerformAt sends a new job to the queue, with a given start time.
-func (a Worker) PerformAt(job worker.Job, t time.Time) error {
+func (a *Worker) PerformAt(job worker.Job, t time.Time) error {
 	return a.PerformIn(job, time.Until(t))
 }
