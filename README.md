@@ -1,6 +1,7 @@
 # Go Worker ![GitHub release](https://img.shields.io/github/v/tag/purposeinplay/go-worker)
 
 [![lint-test-redisw](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_redisw.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_redisw.yml)
+[![lint-test-asynq](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_asynq.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_asynq.yml)
 [![lint-test-inmem](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_inmem.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_inmem.yml)
 [![lint-test-amqpw](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_amqpw.yml/badge.svg)](https://github.com/purposeinplay/go-worker/actions/workflows/lint-test_amqpw.yml)
 
