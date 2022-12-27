@@ -110,7 +110,7 @@ func (w *Worker) Stop() error {
 }
 
 // Perform enqueues a new job.
-func (w Worker) Perform(job worker.Job) error {
+func (w *Worker) Perform(job worker.Job) (*worker.JobInfo, error) {
 	w.Logger.Info("enqueuing job", zap.Any("job", job))
 
 	err := w.Channel.Publish(
@@ -127,10 +127,14 @@ func (w Worker) Perform(job worker.Job) error {
 	if err != nil {
 		w.Logger.Error("error enqueuing job", zap.Any("job", job))
 
-		return fmt.Errorf("error enqueuing job: %w", err)
+		return nil, fmt.Errorf("error enqueuing job: %w", err)
 	}
 
-	return nil
+	return &worker.JobInfo{
+		ID:           "",
+		Retries:      0,
+		LastFailedAt: time.Time{},
+	}, nil
 }
 
 // Register consumes a task, using the declared worker.Handler.
@@ -149,9 +153,11 @@ func (w *Worker) Register(name string, handler worker.Handler) error {
 		return fmt.Errorf("unable to create queue: %w", err)
 	}
 
+	id := fmt.Sprintf("%s_%s_%s", w.consumerName, name, rand.String(20)) // nolint: gomnd,revive
+
 	msgs, err := w.Channel.Consume(
 		name,
-		fmt.Sprintf("%s_%s_%s", w.consumerName, name, rand.String(20)), // nolint: gomnd,revive
+		id,
 		false, // auto-ack
 		false, // exclusive
 		false, // no-local
@@ -187,7 +193,13 @@ func (w *Worker) Register(name string, handler worker.Handler) error {
 				continue
 			}
 
-			if err := handler(args); err != nil {
+			err = handler(worker.Job{
+				ID:      id,
+				Handler: name,
+				Args:    args,
+			})
+
+			if err != nil {
 				w.Logger.Info(
 					"unable to process job",
 					zap.Any("job", name),
@@ -213,7 +225,7 @@ func (w *Worker) Register(name string, handler worker.Handler) error {
 }
 
 // PerformIn performs a job delayed by the given duration.
-func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
+func (w *Worker) PerformIn(job worker.Job, t time.Duration) (*worker.JobInfo, error) {
 	w.Logger.Info("enqueuing job", zap.Any("job", job))
 
 	dur := int64(t / time.Millisecond)
@@ -240,7 +252,7 @@ func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 			zap.Any("job", job.Handler),
 		)
 
-		return err
+		return nil, err
 	}
 
 	err = w.Channel.Publish(
@@ -257,13 +269,17 @@ func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 
 	if err != nil {
 		w.Logger.Info("error enqueuing job %w", zap.Any("job", job.Handler))
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &worker.JobInfo{
+		ID:           "",
+		Retries:      0,
+		LastFailedAt: time.Time{},
+	}, nil
 }
 
 // PerformAt performs a job at the given time.
-func (w Worker) PerformAt(job worker.Job, t time.Time) error {
+func (w *Worker) PerformAt(job worker.Job, t time.Time) (*worker.JobInfo, error) {
 	return w.PerformIn(job, time.Until(t))
 }

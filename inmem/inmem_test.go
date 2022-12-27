@@ -9,10 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func sampleHandler(worker.Args) error {
-	return nil
-}
-
 func Test_InMem_RegisterEmpty(t *testing.T) {
 	t.Parallel()
 
@@ -21,7 +17,9 @@ func Test_InMem_RegisterEmpty(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = memWorker.Register("", sampleHandler)
+	err = memWorker.Register("", func(job worker.Job) error {
+		return nil
+	})
 	require.Error(t, err)
 }
 
@@ -57,10 +55,14 @@ func Test_InMem_RegisterExisting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = memWorker.Register("sample", sampleHandler)
+	err = memWorker.Register("sample", func(job worker.Job) error {
+		return nil
+	})
 	require.NoError(t, err)
 
-	err = memWorker.Register("sample", sampleHandler)
+	err = memWorker.Register("sample", func(job worker.Job) error {
+		return nil
+	})
 	require.Error(t, err)
 }
 
@@ -91,13 +93,18 @@ func Test_InMem_Perform(t *testing.T) {
 
 	require.NoError(t, memWorker.Start())
 
-	memWorker.Register("x", func(worker.Args) error {
+	err = memWorker.Register("x", func(job worker.Job) error {
+		require.NotNil(t, job.ID)
+		require.Equal(t, "x", job.Handler)
 		hit = true
 		return nil
 	})
-	memWorker.Perform(worker.Job{
+	require.NoError(t, err)
+
+	result, err := memWorker.Perform(worker.Job{
 		Handler: "x",
 	})
+	require.NotNil(t, result.ID)
 
 	// the worker should guarantee the job is finished before the worker stopped
 	require.NoError(t, memWorker.Stop())
@@ -116,13 +123,14 @@ func Test_InMem_PerformBroken(t *testing.T) {
 
 	require.NoError(t, memWorker.Start())
 
-	memWorker.Register("x", func(worker.Args) error {
+	err = memWorker.Register("x", func(job worker.Job) error {
 		hit = true
 
 		println([]string{}[0])
 
 		return nil
 	})
+
 	memWorker.Perform(worker.Job{
 		Handler: "x",
 	})
@@ -143,7 +151,7 @@ func Test_InMem_PerformWithEmptyJob(t *testing.T) {
 
 	defer memWorker.Stop()
 
-	err = memWorker.Perform(worker.Job{})
+	_, err = memWorker.Perform(worker.Job{})
 	require.Error(t, err)
 }
 
@@ -159,7 +167,7 @@ func Test_InMem_PerformWithUnknownJob(t *testing.T) {
 
 	defer memWorker.Stop()
 
-	err = memWorker.Perform(worker.Job{Handler: "unknown"})
+	_, err = memWorker.Perform(worker.Job{Handler: "unknown"})
 	require.Error(t, err)
 }
 
@@ -171,8 +179,11 @@ func Test_InMem_PerformBeforeStart(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	require.NoError(t, memWorker.Register("sample", sampleHandler))
-	err = memWorker.Perform(worker.Job{Handler: "sample"})
+	require.NoError(t, memWorker.Register("sample", func(job worker.Job) error {
+		return nil
+	}))
+
+	_, err = memWorker.Perform(worker.Job{Handler: "sample"})
 	require.Error(t, err)
 }
 
@@ -184,11 +195,13 @@ func Test_InMem_PerformAfterStop(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	require.NoError(t, memWorker.Register("sample", sampleHandler))
+	require.NoError(t, memWorker.Register("sample", func(job worker.Job) error {
+		return nil
+	}))
 	require.NoError(t, memWorker.Start())
 	require.NoError(t, memWorker.Stop())
 
-	err = memWorker.Perform(worker.Job{Handler: "sample"})
+	_, err = memWorker.Perform(worker.Job{Handler: "sample"})
 	require.Error(t, err)
 }
 
@@ -207,7 +220,7 @@ func Test_InMem_PerformAt(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	memWorker.Register("x", func(worker.Args) error {
+	memWorker.Register("x", func(job worker.Job) error {
 		hit = true
 		wg.Done()
 		return nil
@@ -240,7 +253,7 @@ func Test_InMem_PerformIn(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	memWorker.Register("x", func(worker.Args) error {
+	memWorker.Register("x", func(job worker.Job) error {
 		hit = true
 		wg.Done()
 		return nil
@@ -265,8 +278,11 @@ func Test_InMem_PerformInBeforeStart(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	require.NoError(t, memWorker.Register("sample", sampleHandler))
-	err = memWorker.PerformIn(
+	require.NoError(t, memWorker.Register("sample", func(job worker.Job) error {
+		return nil
+	}))
+
+	_, err = memWorker.PerformIn(
 		worker.Job{Handler: "sample"}, 5*time.Millisecond,
 	)
 	require.Error(t, err)
@@ -280,7 +296,9 @@ func Test_InMem_PerformInAfterStop(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = memWorker.Register("sample", sampleHandler)
+	err = memWorker.Register("sample", func(job worker.Job) error {
+		return nil
+	})
 	require.NoError(t, err)
 
 	err = memWorker.Start()
@@ -289,7 +307,7 @@ func Test_InMem_PerformInAfterStop(t *testing.T) {
 	err = memWorker.Stop()
 	require.NoError(t, err)
 
-	err = memWorker.PerformIn(worker.Job{Handler: "sample"}, 5*time.Millisecond)
+	_, err = memWorker.PerformIn(worker.Job{Handler: "sample"}, 5*time.Millisecond)
 	require.Error(t, err)
 }
 
@@ -307,12 +325,12 @@ func Test_InMem_PerformInFollowedByStop(t *testing.T) {
 	err = memWorker.Start()
 	require.NoError(t, err)
 
-	memWorker.Register("sample", func(worker.Args) error {
+	memWorker.Register("sample", func(job worker.Job) error {
 		hit = true
 		return nil
 	})
 
-	err = memWorker.PerformIn(worker.Job{
+	_, err = memWorker.PerformIn(worker.Job{
 		Handler: "sample",
 	}, 300*time.Millisecond)
 

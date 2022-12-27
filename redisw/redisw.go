@@ -82,7 +82,11 @@ func (a *Worker) Stop() error {
 // Register binds a new job, with a name and a handler.
 func (a *Worker) Register(name string, h worker.Handler) error {
 	a.pool.Job(name, func(job *work.Job) error {
-		return h(job.Args)
+		return h(worker.Job{
+			ID:      job.ID,
+			Handler: job.Name,
+			Args:    job.Args,
+		})
 	})
 
 	return nil
@@ -95,49 +99,71 @@ func (a *Worker) RegisterWithOptions(
 	h worker.Handler,
 ) error {
 	a.pool.JobWithOptions(name, opts, func(job *work.Job) error {
-		return h(job.Args)
+		return h(worker.Job{
+			ID:      job.ID,
+			Handler: job.Name,
+			Args:    job.Args,
+		})
 	})
 
 	return nil
 }
 
 // Perform sends a new job to the queue, now.
-func (a *Worker) Perform(job worker.Job) error {
+func (a *Worker) Perform(job worker.Job) (*worker.JobInfo, error) {
 	a.logger.Info("enqueuing job", zap.String("job", job.String()))
 
-	_, err := a.enqueuer.Enqueue(job.Handler, job.Args)
+	enqueue, err := a.enqueuer.Enqueue(job.Handler, job.Args)
 	if err != nil {
 		a.logger.Error(
 			"error enqueuing job",
 			zap.String("job", job.String()),
 		)
 
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
-	return nil
+	lastFailedAt := time.Unix(enqueue.FailedAt, 0)
+
+	return &worker.JobInfo{
+		ID:           enqueue.ID,
+		Retries:      int(enqueue.Fails),
+		LastFailedAt: lastFailedAt,
+	}, nil
 }
 
 // PerformIn sends a new job to the queue, with a given delay.
-func (a *Worker) PerformIn(job worker.Job, t time.Duration) error {
+func (a *Worker) PerformIn(
+	job worker.Job,
+	t time.Duration,
+) (*worker.JobInfo, error) {
 	a.logger.Info("enqueuing job", zap.String("job", job.String()))
 
 	d := int64(t / time.Second)
 
-	_, err := a.enqueuer.EnqueueIn(job.Handler, d, job.Args)
+	enqueue, err := a.enqueuer.EnqueueIn(job.Handler, d, job.Args)
 	if err != nil {
 		a.logger.Error(
 			"error enqueuing job",
 			zap.String("job", job.String()),
 		)
 
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
-	return nil
+	lastFailedAt := time.Unix(enqueue.FailedAt, 0)
+
+	return &worker.JobInfo{
+		ID:           enqueue.ID,
+		Retries:      int(enqueue.Fails),
+		LastFailedAt: lastFailedAt,
+	}, nil
 }
 
 // PerformAt sends a new job to the queue, with a given start time.
-func (a *Worker) PerformAt(job worker.Job, t time.Time) error {
+func (a *Worker) PerformAt(
+	job worker.Job,
+	t time.Time,
+) (*worker.JobInfo, error) {
 	return a.PerformIn(job, time.Until(t))
 }

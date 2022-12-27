@@ -87,11 +87,11 @@ func (w Worker) Stop() error {
 	return nil
 }
 
-func (w Worker) Perform(job worker.Job) error {
+func (w Worker) Perform(job worker.Job) (*worker.JobInfo, error) {
 	w.logger.Info("enqueuing job", zap.String("job", job.String()))
 	payload, err := json.Marshal(job.Args)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	task := asynq.NewTask(job.Handler, payload)
@@ -103,7 +103,7 @@ func (w Worker) Perform(job worker.Job) error {
 			zap.String("job", job.String()),
 		)
 
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
 	w.logger.Info(
@@ -114,10 +114,20 @@ func (w Worker) Perform(job worker.Job) error {
 		zap.Int("max_retry", enqueue.MaxRetry),
 	)
 
-	return nil
+	return &worker.JobInfo{
+		ID:           enqueue.ID,
+		Retries:      enqueue.Retried,
+		LastFailedAt: enqueue.LastFailedAt,
+	}, nil
 }
 
-func (w Worker) PerformAt(job worker.Job, t time.Time) error {
+func (w Worker) PerformAt(
+	job worker.Job,
+	t time.Time,
+) (
+	*worker.JobInfo,
+	error,
+) {
 	w.logger.Info(
 		"enqueuing job",
 		zap.String("job", job.String()),
@@ -125,7 +135,7 @@ func (w Worker) PerformAt(job worker.Job, t time.Time) error {
 	)
 	opts, err := json.Marshal(job.Args)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	task := asynq.NewTask(job.Handler, opts)
@@ -137,7 +147,7 @@ func (w Worker) PerformAt(job worker.Job, t time.Time) error {
 			zap.String("job", job.String()),
 		)
 
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
 	w.logger.Info(
@@ -149,10 +159,17 @@ func (w Worker) PerformAt(job worker.Job, t time.Time) error {
 		zap.Int("max_retry", enqueue.MaxRetry),
 	)
 
-	return nil
+	return &worker.JobInfo{
+		ID:           enqueue.ID,
+		Retries:      enqueue.Retried,
+		LastFailedAt: enqueue.LastFailedAt,
+	}, nil
 }
 
-func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
+func (w Worker) PerformIn(
+	job worker.Job,
+	t time.Duration,
+) (*worker.JobInfo, error) {
 	w.logger.Info(
 		"enqueuing job",
 		zap.String("job", job.String()),
@@ -160,7 +177,7 @@ func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 	)
 	payload, err := json.Marshal(job.Args)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	task := asynq.NewTask(job.Handler, payload)
@@ -172,7 +189,7 @@ func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 			zap.String("job", job.String()),
 		)
 
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
 	w.logger.Info(
@@ -184,10 +201,14 @@ func (w Worker) PerformIn(job worker.Job, t time.Duration) error {
 		zap.Int("max_retry", enqueue.MaxRetry),
 	)
 
-	return nil
+	return &worker.JobInfo{
+		ID:           enqueue.ID,
+		Retries:      enqueue.Retried,
+		LastFailedAt: enqueue.LastFailedAt,
+	}, nil
 }
 
-func (w Worker) Register(name string, handler worker.Handler) error {
+func (w Worker) Register(name string, h worker.Handler) error {
 	w.mux.HandleFunc(name, func(ctx context.Context, task *asynq.Task) error {
 		var payload worker.Args
 		err := json.Unmarshal(task.Payload(), &payload)
@@ -195,7 +216,11 @@ func (w Worker) Register(name string, handler worker.Handler) error {
 			return err
 		}
 
-		return handler(payload)
+		return h(worker.Job{
+			ID:      task.ResultWriter().TaskID(),
+			Handler: task.Type(),
+			Args:    payload,
+		})
 	})
 
 	return nil

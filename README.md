@@ -23,11 +23,11 @@ type Worker interface {
     // Stop the worker
     Stop() error
     // Perform a job as soon as possible
-    Perform(Job) error
+		Perform(job Job) (*JobInfo, error)
     // PerformAt performs a job at a particular time
-    PerformAt(Job, time.Time) error
+    PerformAt(Job, time.Time) (*JobInfo, error)
     // PerformIn performs a job after waiting for a specified amount of time
-    PerformIn(Job, time.Duration) error
+    PerformIn(Job, time.Duration) (*JobInfo, error)
     // Register a Handler
     Register(string, Handler) error
 }
@@ -75,15 +75,15 @@ This step is optional if you want to use the goroutines-based worker.
 To enqueue jobs, you will need to register a Handler that will be used to run & process the jobs. Each handler has to implement the following interface.
 
 ```go
-// Handler function that will be run by the worker and given
-// a slice of arguments
-type Handler func(worker.Args) error
+// Handler function that will be run by the worker and return
+// the job structure as the callback
+type Handler func(worker.Job) error
 ```
 
 ```go
 import "github.com/purposeinplay/go-worker"
 
-redisWorker.Register("send_email", func(args worker.Args) error {
+redisWorker.Register("send_email", func(job worker.Job) error {
 // do work to send an email
 return nil
 })

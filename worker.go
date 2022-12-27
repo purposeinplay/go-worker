@@ -6,7 +6,7 @@ import (
 
 // Handler function that will be run by the worker and given
 // a slice of arguments.
-type Handler func(Args) error
+type Handler func(Job) error
 
 // Worker describes how a worker should be implemented.
 type Worker interface {
@@ -17,13 +17,13 @@ type Worker interface {
 	Stop() error
 
 	// Perform a job as soon as possible
-	Perform(job Job) error
+	Perform(job Job) (*JobInfo, error)
 
 	// PerformAt performs a job at a particular time
-	PerformAt(Job, time.Time) error
+	PerformAt(Job, time.Time) (*JobInfo, error)
 
 	// PerformIn performs a job after waiting for a specified amount of time
-	PerformIn(Job, time.Duration) error
+	PerformIn(Job, time.Duration) (*JobInfo, error)
 
 	// Register a Handler
 	Register(string, Handler) error

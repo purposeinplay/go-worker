@@ -75,18 +75,22 @@ func Test_Perform(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	asynqWorker.Register("perform", func(worker.Args) error {
+	asynqWorker.Register("perform", func(job worker.Job) error {
 		hit = true
+		require.NotNil(t, job.ID)
+		require.Equal(t, "perform", job.Handler)
 		wg.Done()
 		return nil
 	})
 
-	asynqWorker.Perform(worker.Job{
+	result, err := asynqWorker.Perform(worker.Job{
 		Handler: "perform",
 	})
+	require.NoError(t, err)
 
 	wg.Wait()
 
+	require.NotNil(t, result.ID)
 	require.True(t, hit)
 }
 
@@ -101,7 +105,7 @@ func Test_PerformAt(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	asynqWorker.Register("perform_at", func(args worker.Args) error {
+	asynqWorker.Register("perform_at", func(args worker.Job) error {
 		hit = true
 		wg.Done()
 		return nil
@@ -127,7 +131,7 @@ func Test_PerformIn(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	asynqWorker.Register("perform_in", func(worker.Args) error {
+	asynqWorker.Register("perform_in", func(job worker.Job) error {
 		hit = true
 		wg.Done()
 		return nil
