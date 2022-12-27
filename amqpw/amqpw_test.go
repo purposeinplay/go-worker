@@ -85,16 +85,19 @@ func Test_Perform(t *testing.T) {
 
 	wg.Add(1)
 
-	amqpWorker.Register("perform", func(worker.Args) error {
+	amqpWorker.Register("perform", func(job worker.Job) error {
 		hit = true
 		wg.Done()
 
 		return nil
 	})
 
-	amqpWorker.Perform(worker.Job{
+	result, err := amqpWorker.Perform(worker.Job{
 		Handler: "perform",
 	})
+	require.NoError(t, err)
+
+	fmt.Printf("DDDDDDDDD %+v dddddddd", result)
 
 	wg.Wait()
 
@@ -112,13 +115,13 @@ func Test_PerformMultiple(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
-	amqpWorker.Register("perform1", func(worker.Args) error {
+	amqpWorker.Register("perform1", func(job worker.Job) error {
 		hitPerform1 = true
 		wg.Done()
 		return nil
 	})
 
-	amqpWorker.Register("perform2", func(worker.Args) error {
+	amqpWorker.Register("perform2", func(job worker.Job) error {
 		hitPerform2 = true
 		wg.Done()
 		return nil
@@ -150,7 +153,7 @@ func Test_PerformAt(t *testing.T) {
 
 	wg.Add(1)
 
-	amqpWorker.Register("perform_at", func(_ worker.Args) error {
+	amqpWorker.Register("perform_at", func(_ worker.Job) error {
 		hit = true
 		wg.Done()
 		return nil
@@ -176,7 +179,7 @@ func Test_PerformIn(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	amqpWorker.Register("perform_in", func(worker.Args) error {
+	amqpWorker.Register("perform_in", func(job worker.Job) error {
 		hit = true
 		wg.Done()
 		return nil

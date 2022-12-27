@@ -99,18 +99,20 @@ func (w *Worker) Stop() error {
 }
 
 // Perform a job as soon as possible.
-func (w *Worker) Perform(job worker.Job) error {
+func (w *Worker) Perform(job worker.Job) (*worker.JobInfo, error) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
+	job.ID = generateIdentifier()
+
 	if !w.started.Load() {
-		return errWorkerStopped
+		return nil, errWorkerStopped
 	}
 
 	w.logger.Debug("performing job %s", zap.String("job", job.String()))
 
 	if job.Handler == "" {
-		return errJobHandlerNameEmpty
+		return nil, errJobHandlerNameEmpty
 	}
 
 	if h, ok := w.handlers[job.Handler]; ok {
@@ -120,7 +122,7 @@ func (w *Worker) Perform(job worker.Job) error {
 			defer w.wg.Done()
 
 			err := safeProcess(func() error {
-				return h(job.Args)
+				return h(job)
 			})
 			if err != nil {
 				w.logger.Error("safeProcess err", zap.Error(err))
@@ -129,10 +131,15 @@ func (w *Worker) Perform(job worker.Job) error {
 			w.logger.Debug("completed job %s", zap.String("job", job.String()))
 		}()
 
-		return nil
+		return &worker.JobInfo{
+				ID:           "",
+				Retries:      0,
+				LastFailedAt: time.Time{},
+			},
+			nil
 	}
 
-	return errJobHandlerDoesntExist
+	return nil, errJobHandlerDoesntExist
 }
 
 // safeProcess run the function safely knowing that if it panics
@@ -153,16 +160,24 @@ func safeProcess(fn func() error) (err error) {
 }
 
 // PerformAt performs a job at a particular time.
-func (w *Worker) PerformAt(job worker.Job, t time.Time) error {
+func (w *Worker) PerformAt(
+	job worker.Job,
+	t time.Time,
+) (*worker.JobInfo, error) {
 	return w.PerformIn(job, time.Until(t))
 }
 
 // PerformIn performs a job after waiting for a specified duration.
-func (w *Worker) PerformIn(job worker.Job, dur time.Duration) error {
+func (w *Worker) PerformIn(
+	job worker.Job,
+	dur time.Duration,
+) (*worker.JobInfo, error) {
 	w.wg.Add(1) // waiting job also should be counted
 
+	job.ID = generateIdentifier()
+
 	if !w.started.Load() {
-		return errWorkerStopped
+		return nil, errWorkerStopped
 	}
 
 	go func() {
@@ -192,9 +207,13 @@ func (w *Worker) PerformIn(job worker.Job, dur time.Duration) error {
 		<-time.After(dur)
 
 		if w.started.Load() {
-			_ = w.Perform(job)
+			_, _ = w.Perform(job)
 		}
 	}()
 
-	return nil
+	return &worker.JobInfo{
+		ID:           "",
+		Retries:      0,
+		LastFailedAt: time.Time{},
+	}, nil
 }

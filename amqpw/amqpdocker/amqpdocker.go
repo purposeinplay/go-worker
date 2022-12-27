@@ -33,7 +33,7 @@ func NewContainer(
 		Hostname:     options.containerName,
 		Name:         options.containerName,
 		Repository:   "rabbitmq",
-		Tag:          "management-alpine",
+		Tag:          "3.11.0-management-alpine",
 		PortBindings: portBindings,
 		Env:          envVars(user, pass),
 	}
