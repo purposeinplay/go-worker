@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/purposeinplay/go-commons/logs v0.0.1
-	github.com/purposeinplay/go-worker v0.1.4
+	github.com/purposeinplay/go-worker v0.1.5
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.23.0
 )
