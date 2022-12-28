@@ -225,7 +225,7 @@ func (w *Worker) Register(name string, handler worker.Handler) error {
 }
 
 // PerformIn performs a job delayed by the given duration.
-func (w *Worker) PerformIn(job worker.Job, t time.Duration) (*worker.JobInfo, error) {
+func (w *Worker) PerformIn(job worker.Job, t time.Duration) (*worker.JobInfo, error) { // nolint
 	w.Logger.Info("enqueuing job", zap.Any("job", job))
 
 	dur := int64(t / time.Millisecond)
@@ -280,6 +280,9 @@ func (w *Worker) PerformIn(job worker.Job, t time.Duration) (*worker.JobInfo, er
 }
 
 // PerformAt performs a job at the given time.
-func (w *Worker) PerformAt(job worker.Job, t time.Time) (*worker.JobInfo, error) {
+func (w *Worker) PerformAt(
+	job worker.Job,
+	t time.Time,
+) (*worker.JobInfo, error) {
 	return w.PerformIn(job, time.Until(t))
 }

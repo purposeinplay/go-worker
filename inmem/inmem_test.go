@@ -104,6 +104,8 @@ func Test_InMem_Perform(t *testing.T) {
 	result, err := memWorker.Perform(worker.Job{
 		Handler: "x",
 	})
+
+	require.NoError(t, err)
 	require.NotNil(t, result.ID)
 
 	// the worker should guarantee the job is finished before the worker stopped
@@ -121,6 +123,8 @@ func Test_InMem_PerformBroken(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	require.NoError(t, err)
+
 	require.NoError(t, memWorker.Start())
 
 	err = memWorker.Register("x", func(job worker.Job) error {
@@ -130,6 +134,7 @@ func Test_InMem_PerformBroken(t *testing.T) {
 
 		return nil
 	})
+	require.NoError(t, err)
 
 	memWorker.Perform(worker.Job{
 		Handler: "x",
@@ -307,7 +312,10 @@ func Test_InMem_PerformInAfterStop(t *testing.T) {
 	err = memWorker.Stop()
 	require.NoError(t, err)
 
-	_, err = memWorker.PerformIn(worker.Job{Handler: "sample"}, 5*time.Millisecond)
+	_, err = memWorker.PerformIn(
+		worker.Job{Handler: "sample"}, 5*time.Millisecond,
+	)
+
 	require.Error(t, err)
 }
 

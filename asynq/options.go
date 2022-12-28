@@ -15,7 +15,6 @@ type Options struct {
 	redisClientCfg *asynq.RedisClientOpt
 	cfg            asynq.Config
 	logger         *zap.Logger
-	maxConcurrency uint
 }
 
 // WithRedisClientCfg configures the RedisClientCfg option.
