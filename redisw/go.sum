@@ -81,8 +81,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/purposeinplay/go-commons/logs v0.0.1 h1:xpxDyYevs6hdhjfugLA+NJRZrM0Df5+oTARCtrdLLTQ=
 github.com/purposeinplay/go-commons/logs v0.0.1/go.mod h1:n+IysjuLdUx3L8t3bCX0ltTAWWpRfzLyGbll3tUxMy8=
-github.com/purposeinplay/go-worker v0.1.0 h1:yb7IGRitXSNUoDLArz/okUO80m+QeTub8bbbpprsrvk=
-github.com/purposeinplay/go-worker v0.1.0/go.mod h1:WXtqnTNugrfQ05Mcr7WY3CJoS7KwT1SO4z8Uutc2Epo=
+github.com/purposeinplay/go-worker v0.1.4 h1:XqtAJ4dxu/AA8IpM42f4UDVfN7aoK9wYje0crbXupJE=
+github.com/purposeinplay/go-worker v0.1.4/go.mod h1:WXtqnTNugrfQ05Mcr7WY3CJoS7KwT1SO4z8Uutc2Epo=
 github.com/robfig/cron v1.2.0 h1:ZjScXvvxeQ63Dbyxy76Fj3AT3Ut0aKsyd2/tl3DTMuQ=
 github.com/robfig/cron v1.2.0/go.mod h1:JGuDeoQd7Z6yL4zQhZ3OPEVHB7fL6Ka6skscFHfmt2k=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
