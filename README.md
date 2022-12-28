@@ -9,7 +9,7 @@
 
 Go Worker is a Go library for performing asynchronous background jobs backed by:
 
-- *Go Routines*: Great for simple application that don't require persistant jobs queues. It uses go routines to implement
+- *Go Routines*: Great for simple application that don't require persistant jobs queues. It uses go routines to implement.
 - *Redis*: It implements `github.com/gocraft/work` package using Redis as store.
 - *RabbitMQ*: A Worker implementation to use with AMQP-compatible brokers (such as RabbitMQ).
 
