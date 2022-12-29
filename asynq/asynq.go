@@ -17,10 +17,11 @@ var _ worker.Worker = (*Worker)(nil)
 
 // Worker implements the Worker interface.
 type Worker struct {
-	server *asynq.Server
-	client *asynq.Client
-	mux    *asynq.ServeMux
-	logger *zap.Logger
+	server    *asynq.Server
+	client    *asynq.Client
+	inspector *asynq.Inspector
+	mux       *asynq.ServeMux
+	logger    *zap.Logger
 }
 
 const (
@@ -73,11 +74,14 @@ func New(opts ...Option) (*Worker, error) {
 
 	client := asynq.NewClient(options.redisClientCfg)
 
+	inspector := asynq.NewInspector(options.redisClientCfg)
+
 	return &Worker{
-		client: client,
-		server: server,
-		mux:    mux,
-		logger: logger,
+		client:    client,
+		server:    server,
+		inspector: inspector,
+		mux:       mux,
+		logger:    logger,
 	}, nil
 }
 
@@ -237,6 +241,16 @@ func (w Worker) Register(name string, h worker.Handler) error {
 			Args:    payload,
 		})
 	})
+
+	return nil
+}
+
+// DeleteJob removes a job from the queue.
+func (w Worker) DeleteJob(queue, jobID string) error {
+	err := w.inspector.DeleteTask(queue, jobID)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

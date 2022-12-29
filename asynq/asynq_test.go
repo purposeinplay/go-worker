@@ -145,3 +145,36 @@ func Test_PerformIn(t *testing.T) {
 
 	require.True(t, hit)
 }
+
+func Test_DeleteJob(t *testing.T) {
+	asynqWorker, err := newDependencies(t)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var hit bool
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+
+	asynqWorker.Register("perform_in", func(job worker.Job) error {
+		hit = true
+		wg.Done()
+		return nil
+	})
+
+	jobInfo, _ := asynqWorker.PerformIn(worker.Job{
+		Handler: "perform_in",
+	}, 10*time.Second)
+
+	err = asynqWorker.DeleteJob("default", jobInfo.ID)
+	require.NoError(t, err)
+
+	if err == nil {
+		wg.Done()
+	}
+
+	wg.Wait()
+
+	require.False(t, hit)
+}
