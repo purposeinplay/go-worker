@@ -23,7 +23,7 @@ type Worker interface {
     // Stop the worker
     Stop() error
     // Perform a job as soon as possible
-		Perform(job Job) (*JobInfo, error)
+    Perform(job Job) (*JobInfo, error)
     // PerformAt performs a job at a particular time
     PerformAt(Job, time.Time) (*JobInfo, error)
     // PerformIn performs a job after waiting for a specified amount of time
