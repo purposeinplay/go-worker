@@ -217,3 +217,8 @@ func (w *Worker) PerformIn(
 		LastFailedAt: time.Time{},
 	}, nil
 }
+
+// DeleteJob removes a job from the queue.
+func (w *Worker) DeleteJob(queue, jobID string) error {
+	panic("implement me")
+}

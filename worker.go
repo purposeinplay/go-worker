@@ -27,4 +27,7 @@ type Worker interface {
 
 	// Register a Handler
 	Register(string, Handler) error
+
+	// DeleteJob removes a job from the queue.
+	DeleteJob(queue, jobID string) error
 }

@@ -167,3 +167,8 @@ func (a *Worker) PerformAt(
 ) (*worker.JobInfo, error) {
 	return a.PerformIn(job, time.Until(t))
 }
+
+// DeleteJob removes a job from the queue.
+func (a *Worker) DeleteJob(queue, jobID string) error {
+	panic("implement me")
+}
