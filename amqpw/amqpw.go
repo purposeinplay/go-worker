@@ -288,6 +288,6 @@ func (w *Worker) PerformAt(
 }
 
 // DeleteJob removes a job from the queue.
-func (w *Worker) DeleteJob(queue, jobID string) error {
+func (*Worker) DeleteJob(_, _ string) error {
 	panic("implement me")
 }
