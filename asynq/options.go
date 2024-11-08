@@ -42,3 +42,15 @@ type cfgOption struct {
 func (o cfgOption) apply(opts *Options) {
 	opts.cfg = o.Cfg
 }
+
+func WithQueues(queues map[string]int) Option {
+	return optionFunc(func(opts *Options) {
+		opts.cfg.Queues = queues
+	})
+}
+
+type optionFunc func(*Options)
+
+func (f optionFunc) apply(opts *Options) {
+	f(opts)
+}
