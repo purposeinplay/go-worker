@@ -107,7 +107,12 @@ func (w Worker) Perform(job worker.Job) (*worker.JobInfo, error) {
 
 	task := asynq.NewTask(job.Handler, payload)
 
-	enqueue, err := w.client.Enqueue(task)
+	enqueueOpts := []asynq.Option{}
+	if job.Queue != "" {
+		enqueueOpts = append(enqueueOpts, asynq.Queue(job.Queue))
+	}
+
+	enqueue, err := w.client.Enqueue(task, enqueueOpts...)
 	if err != nil {
 		w.logger.Error(
 			"error enqueuing job",
@@ -154,7 +159,12 @@ func (w Worker) PerformAt(
 
 	task := asynq.NewTask(job.Handler, opts)
 
-	enqueue, err := w.client.Enqueue(task, asynq.ProcessAt(jobTime))
+	enqueueOpts := []asynq.Option{asynq.ProcessAt(jobTime)}
+	if job.Queue != "" {
+		enqueueOpts = append(enqueueOpts, asynq.Queue(job.Queue))
+	}
+
+	enqueue, err := w.client.Enqueue(task, enqueueOpts...)
 	if err != nil {
 		w.logger.Error(
 			"error enqueuing job",
@@ -199,7 +209,12 @@ func (w Worker) PerformIn(
 
 	task := asynq.NewTask(job.Handler, payload)
 
-	enqueue, err := w.client.Enqueue(task, asynq.ProcessIn(jobTime))
+	enqueueOpts := []asynq.Option{asynq.ProcessIn(jobTime)}
+	if job.Queue != "" {
+		enqueueOpts = append(enqueueOpts, asynq.Queue(job.Queue))
+	}
+
+	enqueue, err := w.client.Enqueue(task, enqueueOpts...)
 	if err != nil {
 		w.logger.Error(
 			"error enqueuing job",
